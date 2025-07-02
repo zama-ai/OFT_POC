@@ -33,19 +33,33 @@ const deploy: DeployFunction = async (hre) => {
     // }
     const endpointV2Deployment = await hre.deployments.get('EndpointV2')
 
-    const { address } = await deploy(contractName, {
-        from: deployer,
-        args: [
-            'MyOFTMock', // name
-            'MOFTMock', // symbol
-            endpointV2Deployment.address, // LayerZero's EndpointV2 address
-            deployer, // owner
-        ],
-        log: true,
-        skipIfAlreadyDeployed: false,
-    })
-
-    console.log(`Deployed contract: ${contractName}, network: ${hre.network.name}, address: ${address}`)
+    if (hre.network.name === 'ethereum-testnet') {
+        const { address } = await deploy(contractName + 'Source', {
+            from: deployer,
+            args: [
+                'MyOFTMockSource', // name
+                'MOFTMockSource', // symbol
+                endpointV2Deployment.address, // LayerZero's EndpointV2 address
+                deployer, // owner
+            ],
+            log: true,
+            skipIfAlreadyDeployed: false,
+        })
+        console.log(`Deployed SOURCE contract: ${contractName}, network: ${hre.network.name}, address: ${address}`)
+    } else {
+        const { address } = await deploy(contractName, {
+            from: deployer,
+            args: [
+                'MyOFTMock', // name
+                'MOFTMock', // symbol
+                endpointV2Deployment.address, // LayerZero's EndpointV2 address
+                deployer, // owner
+            ],
+            log: true,
+            skipIfAlreadyDeployed: false,
+        })
+        console.log(`Deployed contract: ${contractName}, network: ${hre.network.name}, address: ${address}`)
+    }
 }
 
 deploy.tags = [contractName]
