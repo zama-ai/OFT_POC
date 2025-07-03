@@ -6,7 +6,7 @@
 cp .env.example .env
 ```
 
-Then fill the `PRIVATE_KEY` and `SEPOLIA_RPC_URL` in `.env` with your own values.
+Then fill the `PRIVATE_KEY` and `SEPOLIA_RPC_URL` in `.env` with your own values. Also, if you want to do Step 4 (Etherscan verification) which is optional but recommended for easier debugging, get an Etherscan free API key in order to set the value of `ETHERSCAN_API`.
 
 ## Step 2 : Funding deployer wallet on both chains
 
@@ -15,7 +15,7 @@ For bridging some ETH from Sepolia Ethereum to Sepolia Optimism, go to this link
 
 ![image](./BridgingToOptimismSepolia.png)
 
-Note: If you want to add Sepolia Optimism to your (Metamask) wallet just go to this site https://chainlist.org/chain/11155420 and click on `Connect Wallet -> Approve`. This way, you could easily check if your bridging transaction was succesful: after waiting for 1-2 minutes the bridged sent funds should arrive on your wallet on Optimism Sepolia.
+**Note:** If you want to add Sepolia Optimism to your (Metamask) wallet just go to this site https://chainlist.org/chain/11155420 and click on `Connect Wallet -> Approve`. This way, you could easily check if your bridging transaction was succesful: after waiting for 1-2 minutes the bridged sent funds should arrive on your wallet on Optimism Sepolia.
 
 ## Step 3 : Deploy MyOFTMock on both chains
 
@@ -27,7 +27,23 @@ npx hardhat lz:deploy
 Then press enter to deploy on both networks.
 When asked for ` Which deploy script tags would you like to use?` entre `MyOFTMock`, then press enter again and wait few seconds to deploy the OFT on both chains. Both addresses will be logged (one for each chain) and during deployment, your deployer account will automatically get `100` MyOFTMock tokens minted to himself on the Sepolia Ethereum chain exclusively (no minted value at deployment on Optimism testnet).
 
-## Step 4 : Wire both contracts
+## Step 4 : Etherscan verification (Optional)
+
+In order verify the OFT contract on Etherscan for the Ethereum Sepolia network use:
+
+```
+pnpm verify:etherscan:ethereum:sepolia
+```
+
+And for the Optimism Sepolia network run:
+
+```
+pnpm verify:etherscan:optimism:sepolia
+```
+
+**Note:** Due to a bug in the etherscan-verification task, sometimes those scripts will log an error and/or return a wrong URL for block explorer link, but most of the times, despite those errors, if you check the actual results by searching for corresponding contracts addresses on the block explorer, you will notice that the contracts will actually be succesfully verified after running those commands (i.e [https://sepolia.etherscan.io/](https://sepolia.etherscan.io/) for Ethereum testnet and [https://sepolia-optimism.etherscan.io/](https://sepolia-optimism.etherscan.io/) for Optimism testnet).
+
+## Step 5 : Wire both contracts
 
 ```
 npx hardhat lz:oapp:wire --oapp-config layerzero.config.ts
@@ -35,7 +51,7 @@ npx hardhat lz:oapp:wire --oapp-config layerzero.config.ts
 
 And follow straightforward instructions to wire the OFT contracts.
 
-## Step 5 : Cross-chain transfer
+## Step 6 : Cross-chain transfer
 
 For example you can send `1.5` MyOFTMock token from the deployer wallet to a custom receiver address by running this command and following instructions:
 
