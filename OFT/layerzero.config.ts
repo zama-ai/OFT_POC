@@ -12,7 +12,7 @@ const optimismContract: OmniPointHardhat = {
 
 const sepoliaContract: OmniPointHardhat = {
     eid: EndpointId.SEPOLIA_V2_TESTNET,
-    contractName: 'MyOFTMock',
+    contractName: 'MyOFTMockSource',
 }
 
 // To connect all the above chains to each other, we need the following pathways:
