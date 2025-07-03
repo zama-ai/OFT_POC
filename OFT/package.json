@@ -17,7 +17,9 @@
     "lint:sol": "solhint 'contracts/**/*.sol'",
     "test": "$npm_execpath run test:forge && $npm_execpath run test:hardhat",
     "test:forge": "forge test",
-    "test:hardhat": "hardhat test"
+    "test:hardhat": "hardhat test",
+    "verify:etherscan:ethereum:sepolia": "dotenv -e .env --  bash -c 'npx @layerzerolabs/verify-contract verify-contract -d ./deployments -n ethereum-testnet -u https://api.etherscan.io/v2/api?chainid=11155111 -k $ETHERSCAN_API'",
+    "verify:etherscan:optimism:sepolia": "dotenv -e .env --  bash -c 'npx @layerzerolabs/verify-contract verify-contract -d ./deployments -n optimism-testnet -u https://api.etherscan.io/v2/api?chainid=11155420 -k $ETHERSCAN_API'"
   },
   "resolutions": {
     "ethers": "^5.7.2",
@@ -42,6 +44,7 @@
     "@layerzerolabs/test-devtools-evm-foundry": "~6.0.3",
     "@layerzerolabs/toolbox-foundry": "~0.1.12",
     "@layerzerolabs/toolbox-hardhat": "~0.6.11",
+    "@layerzerolabs/verify-contract": "^1.1.33",
     "@nomicfoundation/hardhat-ethers": "^3.0.5",
     "@nomiclabs/hardhat-ethers": "^2.2.3",
     "@openzeppelin/contracts": "^5.0.2",
@@ -52,7 +55,8 @@
     "@types/node": "~18.18.14",
     "chai": "^4.4.1",
     "concurrently": "~9.1.0",
-    "dotenv": "^16.4.1",
+    "dotenv": "^17.0.1",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^8.55.0",
     "eslint-plugin-jest-extended": "~2.0.0",
     "ethers": "^5.7.2",

@@ -11,7 +11,7 @@ contract MyOFTMockSource is MyOFT {
         address _lzEndpoint,
         address _delegate
     ) MyOFT(_name, _symbol, _lzEndpoint, _delegate) {
-        mint(msg.sender, 100 * 1e18);
+        _mint(msg.sender, 100 * 1e18);
     }
 
     function mint(address _to, uint256 _amount) public {
