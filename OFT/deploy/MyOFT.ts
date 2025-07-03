@@ -37,8 +37,8 @@ const deploy: DeployFunction = async (hre) => {
         const { address } = await deploy(contractName + 'Source', {
             from: deployer,
             args: [
-                'MyOFTMockSource', // name
-                'MOFTMockSource', // symbol
+                'MyOFTMock', // name
+                'MOFTMock', // symbol
                 endpointV2Deployment.address, // LayerZero's EndpointV2 address
                 deployer, // owner
             ],
