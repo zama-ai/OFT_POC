@@ -41,7 +41,7 @@ And for the Optimism Sepolia network run:
 pnpm verify:etherscan:optimism:sepolia
 ```
 
-**Note:** Due to a bug in the etherscan-verification task, sometimes those scripts will log an error and/or return a wrong URL for block explorer link, but most of the times, despite those errors, if you check the actual results by searching for corresponding contracts addresses on the block explorer, you will notice that the contracts will actually be succesfully verified after running those commands (i.e [https://sepolia.etherscan.io/](https://sepolia.etherscan.io/) for Ethereum testnet and [https://sepolia-optimism.etherscan.io/](https://sepolia-optimism.etherscan.io/) for Optimism testnet).
+**Note:** Due to a bug in the `verify-contract` task, sometimes those scripts will log an error and/or return a wrong URL for block explorer link, but most of the times, despite those errors, if you check the actual results by searching for corresponding contracts addresses on the block explorer, you will notice that the contracts will actually be succesfully verified after running those commands (i.e [https://sepolia.etherscan.io/](https://sepolia.etherscan.io/) for Ethereum testnet and [https://sepolia-optimism.etherscan.io/](https://sepolia-optimism.etherscan.io/) for Optimism testnet).
 
 ## Step 5 : Wire both contracts
 
