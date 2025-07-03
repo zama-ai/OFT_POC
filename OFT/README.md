@@ -1,4 +1,4 @@
-# OFT_POC quickstart
+# OFT POC quickstart
 
 ## Step 1 : Initial setup
 
@@ -29,7 +29,7 @@ When asked for ` Which deploy script tags would you like to use?` entre `MyOFTMo
 
 ## Step 4 : Etherscan verification (Optional)
 
-In order verify the OFT contract on Etherscan for the Ethereum Sepolia network use:
+In order verify the OFT contract on Etherscan for the Ethereum Sepolia network, use this command (don't worry if the following scripts return you an error or an invalid explorer URL link - see the note at the end of this step):
 
 ```
 pnpm verify:etherscan:ethereum:sepolia
