@@ -10,7 +10,7 @@ const optimismContract: OmniPointHardhat = {
 
 const sepoliaContract: OmniPointHardhat = {
     eid: EndpointId.SEPOLIA_V2_TESTNET,
-    contractName: 'MyOFTMockSource',
+    contractName: 'MyOApp',
 }
 
 // For this example's simplicity, we will use the same enforced options values for sending to all chains
