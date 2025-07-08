@@ -3,7 +3,7 @@ import assert from 'assert'
 import { type DeployFunction } from 'hardhat-deploy/types'
 
 // TODO declare your contract name here
-const contractName = 'MyOApp'
+const contractName = 'MyOAppContexts'
 
 const deploy: DeployFunction = async (hre) => {
     const { getNamedAccounts, deployments } = hre
@@ -33,18 +33,29 @@ const deploy: DeployFunction = async (hre) => {
     //   }
     // }
     const endpointV2Deployment = await hre.deployments.get('EndpointV2')
-
-    const { address } = await deploy(contractName, {
-        from: deployer,
-        args: [
-            endpointV2Deployment.address, // LayerZero's EndpointV2 address
-            deployer, // owner
-        ],
-        log: true,
-        skipIfAlreadyDeployed: false,
-    })
-
-    console.log(`Deployed contract: ${contractName}, network: ${hre.network.name}, address: ${address}`)
+    if (hre.network.name === 'ethereum-testnet') {
+        const { address } = await deploy(contractName + 'Receiver', {
+            from: deployer,
+            args: [
+                endpointV2Deployment.address, // LayerZero's EndpointV2 address
+                deployer, // owner
+            ],
+            log: true,
+            skipIfAlreadyDeployed: false,
+        })
+        console.log(`Deployed contract: ${contractName}Receiver, network: ${hre.network.name}, address: ${address}`)
+    } else {
+        const { address } = await deploy(contractName + 'Sender', {
+            from: deployer,
+            args: [
+                endpointV2Deployment.address, // LayerZero's EndpointV2 address
+                deployer, // owner
+            ],
+            log: true,
+            skipIfAlreadyDeployed: false,
+        })
+        console.log(`Deployed contract: ${contractName}Sender, network: ${hre.network.name}, address: ${address}`)
+    }
 }
 
 deploy.tags = [contractName]

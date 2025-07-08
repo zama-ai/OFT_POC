@@ -2,7 +2,8 @@
 pragma solidity ^0.8.20;
 
 // MyOApp imports
-import { MyOApp, MessagingFee } from "../../contracts/MyOApp.sol";
+import { MyOAppContextsSender, MessagingFee } from "../../contracts/MyOAppContextsSender.sol";
+import { MyOAppContextsReceiver } from "../../contracts/MyOAppContextsReceiver.sol";
 
 // OApp imports
 import { IOAppOptionsType3, EnforcedOptionParam } from "@layerzerolabs/oapp-evm/contracts/oapp/libs/OAppOptionsType3.sol";
@@ -23,8 +24,8 @@ contract MyOAppTest is TestHelperOz5 {
     uint32 private aEid = 1;
     uint32 private bEid = 2;
 
-    MyOApp private aOApp;
-    MyOApp private bOApp;
+    MyOAppContextsSender private aOApp;
+    MyOAppContextsReceiver private bOApp;
 
     address private userA = address(0x1);
     address private userB = address(0x2);
@@ -37,9 +38,9 @@ contract MyOAppTest is TestHelperOz5 {
         super.setUp();
         setUpEndpoints(2, LibraryType.UltraLightNode);
 
-        aOApp = MyOApp(_deployOApp(type(MyOApp).creationCode, abi.encode(address(endpoints[aEid]), address(this))));
+        aOApp = MyOAppContextsSender(_deployOApp(type(MyOAppContextsSender).creationCode, abi.encode(address(endpoints[aEid]), address(this))));
 
-        bOApp = MyOApp(_deployOApp(type(MyOApp).creationCode, abi.encode(address(endpoints[bEid]), address(this))));
+        bOApp = MyOAppContextsReceiver(_deployOApp(type(MyOAppContextsReceiver).creationCode, abi.encode(address(endpoints[bEid]), address(this))));
 
         address[] memory oapps = new address[](2);
         oapps[0] = address(aOApp);
@@ -47,7 +48,7 @@ contract MyOAppTest is TestHelperOz5 {
         this.wireOApps(oapps);
     }
 
-    function test_constructor() public {
+    function test_constructor() public view {
         assertEq(aOApp.owner(), address(this));
         assertEq(bOApp.owner(), address(this));
 
@@ -55,19 +56,19 @@ contract MyOAppTest is TestHelperOz5 {
         assertEq(address(bOApp.endpoint()), address(endpoints[bEid]));
     }
 
-    function test_send_string() public {
+    function test_send_context() public {
         bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200000, 0);
-        string memory message = "Hello, World!";
-        MessagingFee memory fee = aOApp.quoteSendString(bEid, message, options, false);
+        address[] memory message = new address[](2);
+        message[0] = 0xAaE3cD458d297508F7365600BA57545344EE101a;
+        message[1] = 0x3B97f0c0f81Ca59eC6f997Dd25C27A608eA885E9;
+        MessagingFee memory fee = aOApp.quoteSendContext(bEid, message, options, false);
 
-        assertEq(aOApp.lastMessage(), "");
-        assertEq(bOApp.lastMessage(), "");
 
         vm.prank(userA);
-        aOApp.sendString{ value: fee.nativeFee }(bEid, message, options);
+        aOApp.sendContext{ value: fee.nativeFee }(bEid, message, options);
         verifyPackets(bEid, addressToBytes32(address(bOApp)));
 
-        assertEq(aOApp.lastMessage(), "");
-        assertEq(bOApp.lastMessage(), message);
+        assertEq(bOApp.lastContext(0), message[0]);
+        assertEq(bOApp.lastContext(1), message[1]);
     }
 }

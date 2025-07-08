@@ -5,12 +5,12 @@ import { OAppEnforcedOption, OmniPointHardhat } from '@layerzerolabs/toolbox-har
 
 const optimismContract: OmniPointHardhat = {
     eid: EndpointId.OPTSEP_V2_TESTNET,
-    contractName: 'MyOApp',
+    contractName: 'MyOAppContextsSender',
 }
 
 const sepoliaContract: OmniPointHardhat = {
     eid: EndpointId.SEPOLIA_V2_TESTNET,
-    contractName: 'MyOApp',
+    contractName: 'MyOAppContextsReceiver',
 }
 
 // For this example's simplicity, we will use the same enforced options values for sending to all chains
@@ -35,7 +35,7 @@ const pathways: TwoWayConfig[] = [
         optimismContract, // Chain A contract
         sepoliaContract, // Chain B contract
         [['LayerZero Labs'], []], // [ requiredDVN[], [ optionalDVN[], threshold ] ]
-        [1, 1], // [A to B confirmations, B to A confirmations]
+        [1, undefined], // [A to B confirmations, B to A confirmations] // NOTE: undefined is used here because we want an uniderectional pathway
         [EVM_ENFORCED_OPTIONS, EVM_ENFORCED_OPTIONS], // Chain B enforcedOptions, Chain A enforcedOptions
     ],
 ]

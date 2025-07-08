@@ -54,12 +54,18 @@ async function getBlockExplorerLink(networkName: string, txHash: string): Promis
 
 task('lz:oapp:send', 'Sends a string cross‐chain using MyOApp contract')
     .addParam('dstEid', 'Destination endpoint ID', undefined, types.int)
-    .addParam('string', 'String to send', undefined, types.string)
+    .addParam('context', 'JSON array of addresses corresponding to context, eg : ', undefined)
     .addOptionalParam('options', 'Execution options (hex string)', '0x', types.string)
-    .setAction(async (args: { dstEid: number; string: string; options?: string }, hre: HardhatRuntimeEnvironment) => {
-        logger.info(`Initiating string send from ${hre.network.name} to ${endpointIdToNetwork(args.dstEid)}`)
-        logger.info(`String to send: "${args.string}"`)
+    .setAction(async (args: { dstEid: number; context: string; options?: string }, hre: HardhatRuntimeEnvironment) => {
+        logger.info(`Initiating context send from ${hre.network.name} to ${endpointIdToNetwork(args.dstEid)}`)
+        logger.info(`Context to send: "${args.context}"`)
         logger.info(`Destination EID: ${args.dstEid}`)
+
+        const addresses = JSON.parse(args.context)
+
+        if (!Array.isArray(addresses)) {
+            throw new Error('context must be a JSON array')
+        }
 
         // Get the signer
         const [signer] = await hre.ethers.getSigners()
@@ -69,14 +75,14 @@ task('lz:oapp:send', 'Sends a string cross‐chain using MyOApp contract')
         let myOAppContract
         let contractAddress: string
         try {
-            const myOAppDeployment = await hre.deployments.get('MyOApp')
+            const myOAppDeployment = await hre.deployments.get('MyOAppContextsSender')
             contractAddress = myOAppDeployment.address
-            myOAppContract = await hre.ethers.getContractAt('MyOApp', contractAddress, signer)
+            myOAppContract = await hre.ethers.getContractAt('MyOAppContextsSender', contractAddress, signer)
             logger.info(`MyOApp contract found at: ${contractAddress}`)
         } catch (error) {
             DebugLogger.printErrorAndFixSuggestion(
                 KnownErrors.ERROR_GETTING_DEPLOYMENT,
-                `Failed to get MyOApp deployment on network: ${hre.network.name}`
+                `Failed to get MyOAppContextsSender deployment on network: ${hre.network.name}`
             )
             throw error
         }
@@ -89,9 +95,9 @@ task('lz:oapp:send', 'Sends a string cross‐chain using MyOApp contract')
         logger.info('Quoting gas cost for the send transaction...')
         let messagingFee
         try {
-            messagingFee = await myOAppContract.quoteSendString(
+            messagingFee = await myOAppContract.quoteSendContext(
                 args.dstEid,
-                args.string,
+                addresses,
                 options,
                 false // payInLzToken = false (pay in native token)
             )
@@ -109,7 +115,7 @@ task('lz:oapp:send', 'Sends a string cross‐chain using MyOApp contract')
         logger.info('Sending the string transaction...')
         let tx: ContractTransaction
         try {
-            tx = await myOAppContract.sendString(args.dstEid, args.string, options, {
+            tx = await myOAppContract.sendContext(args.dstEid, addresses, options, {
                 value: messagingFee.nativeFee, // Pay the native fee
             })
             logger.info(`  Transaction hash: ${tx.hash}`)
